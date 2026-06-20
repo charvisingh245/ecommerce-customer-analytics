@@ -149,5 +149,6 @@ For the SQL portion, import the dataset into PostgreSQL and run the queries in `
 
 ## Author
 
-**Belle**
+**Charvi Singh**
 📊 Data Analyst | Python, SQL, Tableau
+
