@@ -70,7 +70,11 @@ SELECT
     ) - last_purchase_date AS recency,
     frequency,
     monetary_value
+<<<<<<< HEAD
 from customer_rfm
+=======
+FROM customer_rfm
+>>>>>>> 4d39082ca837e9c95a84667944bfd4e195deee10
 ORDER BY monetary_value DESC;
 
 
@@ -110,8 +114,19 @@ ORDER BY
 
 SELECT
     order_status,
+<<<<<<< HEAD
     ROUND(COUNT(*)::NUMERIC / SUM(COUNT(*)) OVER () * 100,2) AS order_percentage
+=======
+    ROUND(
+        COUNT(*)::NUMERIC / SUM(COUNT(*)) OVER () * 100,
+        2
+    ) AS order_percentage
+>>>>>>> 4d39082ca837e9c95a84667944bfd4e195deee10
 FROM orders
 GROUP BY order_status
 ORDER BY order_percentage DESC;
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 4d39082ca837e9c95a84667944bfd4e195deee10

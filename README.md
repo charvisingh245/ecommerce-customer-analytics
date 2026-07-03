@@ -87,6 +87,7 @@ landing-page-ab-test/
 
 The conversion lift was concentrated among **mobile users** and **organic traffic**, while desktop users showed virtually no change. This suggests the redesigned page may be optimized for mobile-first, organically-acquired visitors. Paid and social channels showed only marginal improvement.
 
+<<<<<<< HEAD
 Segment-level results are exploratory and directional. Individual segments were not independently powered for significance testing — a follow-up device-specific or channel-specific test is recommended before drawing firm conclusions.
 
 ## Guardrail Metric: Average Order Value (AOV)
@@ -127,3 +128,8 @@ The dashboard includes KPI summary cards (Control Rate, Treatment Rate, Relative
 3. Open `ab_test_analysis.ipynb` in Jupyter Notebook
 4. Run all cells (Kernel → Restart & Run All)
 5. For SQL: connect to PostgreSQL, create schema `ab_testing`, import `ab_test_data.csv`, and run `ab_test_queries.sql`
+=======
+**Charvi Singh**
+📊 Data Analyst | Python, SQL, Tableau
+
+>>>>>>> 4d39082ca837e9c95a84667944bfd4e195deee10
