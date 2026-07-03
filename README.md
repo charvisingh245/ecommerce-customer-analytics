@@ -1,153 +1,129 @@
-# E-commerce Customer Behavior Analytics
+# Landing Page A/B Test Analysis
 
-End-to-end analysis of 95,000+ customers and 99,000+ orders from a Brazilian e-commerce marketplace (Olist), covering revenue trends, customer segmentation, retention, delivery performance, and review impact — using Python, SQL, and Tableau.
+## Project Overview
+This project simulates and analyzes an A/B test conducted by a fictional e-commerce company to evaluate whether a redesigned landing page drives higher conversion rates than the existing design. The analysis covers the full experiment lifecycle — from hypothesis formulation and power analysis through statistical testing, segment analysis, and guardrail metric validation — using Python, SQL, and Tableau.
 
-🔗 **[View Interactive Dashboard on Tableau Public](https://public.tableau.com/views/E-commerceCustomerAnalyticsDashboard_17818688492380/Dashboard1?:language=en-US&publish=yes&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link)**
+## Business Question
+> *Does the new landing page design significantly increase the rate at which visitors convert (sign up or make a purchase), compared to the existing page?*
 
----
+## Experiment Design
 
-## Business Problem
+| Parameter | Value | Rationale |
+|---|---|---|
+| Metric | Landing page visit → Conversion | Isolates the effect of the page redesign on top-of-funnel behavior |
+| Baseline conversion rate | 8% | Realistic benchmark for e-commerce landing page conversion |
+| Minimum Detectable Effect (MDE) | 2 percentage points (8% → 10%) | Smallest lift considered business-meaningful |
+| Significance level (α) | 0.05 | Industry standard |
+| Statistical power (1-β) | 0.80 | Industry standard |
+| Required sample size | 3,205 per group (6,410 total) | Calculated via two-proportion power analysis |
+| Random seed | 42 | Ensures reproducibility |
 
-The business wanted to understand:
-- Is revenue growth healthy, and is it being driven by the right factors?
-- Which customers and product categories drive the most value?
-- Is the business retaining customers, or relying entirely on new acquisition?
-- Does delivery performance affect customer satisfaction and reviews?
-
-This project answers those questions using a real-world transactional dataset and translates the findings into specific business recommendations.
-
----
+**Hypotheses:**
+- **H₀ (Null):** The new landing page has no effect on conversion rate (control rate = treatment rate)
+- **H₁ (Alternative):** The new landing page changes conversion rate (control rate ≠ treatment rate)
 
 ## Dataset
+The dataset was simulated using Python (`numpy`, `scipy`) to reflect realistic experiment parameters. Simulation was chosen over a pre-existing dataset to demonstrate end-to-end experiment design thinking, including power analysis prior to data generation.
 
-**Source:** [Brazilian E-Commerce Public Dataset by Olist](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce) (Kaggle)
+| Column | Type | Description |
+|---|---|---|
+| `user_id` | Integer | Unique identifier per visitor |
+| `group` | String | Experiment group: `control` or `treatment` |
+| `converted` | Integer | Conversion outcome: `1` (converted) or `0` (did not convert) |
+| `device_type` | String | Device used: `mobile`, `desktop`, or `tablet` |
+| `traffic_source` | String | Acquisition channel: `organic`, `paid`, or `social` |
+| `order_value` | Float | Order value in USD (non-null only for converted users) |
 
-- 99,441 orders | 95,774 unique customers | 32,951 products | 6 relational tables
-- Time range used: January 2017 – August 2018 (2016 and Sep–Oct 2018 excluded due to incomplete data)
+## Tools Used
 
-| Table | Description |
+| Tool | Purpose |
 |---|---|
-| orders | Order status and timestamps |
-| customers | Customer location data |
-| order_items | Line-item level pricing |
-| products | Product category and attributes |
-| payments | Payment method and value |
-| reviews | Post-purchase review scores |
+| Python (Jupyter Notebook) | Data simulation, statistical testing, visualization |
+| pandas, numpy | Data manipulation and simulation |
+| scipy, statsmodels | Power analysis, z-test, t-test, confidence intervals |
+| matplotlib, seaborn | Exploratory and results visualizations |
+| PostgreSQL (DBeaver) | SQL-based analysis and segment aggregations |
+| Tableau Public | Interactive results dashboard |
 
----
-
-## Tools & Tech Stack
-
-- **Python** (Pandas, NumPy, Matplotlib, Seaborn) — data cleaning, feature engineering, EDA, RFM & cohort analysis
-- **PostgreSQL + DBeaver** — relational database, SQL analysis
-- **Tableau Public** — interactive dashboard
-- **Jupyter Notebook** — analysis environment
-
----
-
-## Methodology
-
-1. **Data Cleaning** — handled missing values across 3 tables, validated data types, removed duplicate review records, and identified/excluded incomplete time periods (2016, Sep–Oct 2018) to avoid skewed trend analysis
-2. **Feature Engineering** — built delivery time, delivery-vs-estimate, late-delivery flag, and revenue fields
-3. **Exploratory Analysis** — monthly revenue/order trends, category-level performance
-4. **RFM Segmentation** — scored all 95,774 customers on Recency, Frequency, Monetary value and classified into 8 actionable segments
-5. **Cohort Retention Analysis** — built a month-by-month retention matrix and benchmarked against industry standards
-6. **Delivery & Review Analysis** — quantified the relationship between delivery speed and review scores
-7. **SQL Replication** — rebuilt all core analyses in PostgreSQL to demonstrate equivalent SQL proficiency
-8. **Dashboard** — consolidated all findings into a single interactive Tableau dashboard
-
----
-
-## Key Insights
-
-**1. Revenue growth is not healthy growth**
-Order volume increased over the period, but Average Order Value declined — revenue growth is being diluted by a shift toward lower-value purchases rather than genuine demand growth.
-
-**2. Beleza (Beauty) is the highest-value category**
-Despite Cama (Bed/Bath) having more total orders, Beleza generates more total revenue due to a significantly higher average price point — indicating beauty products deserve priority in marketing and inventory investment.
-
-**3. 95% of customers are one-time buyers**
-The average customer purchases only 1.03 times. This is a structural retention problem, not a marketing campaign problem.
-
-**4. "Need Attention" is the largest customer segment**
-32,094 customers (33% of the base) fall into this low-engagement, low-spend segment.
-
-**5. The "At Risk" segment drives the most total revenue**
-13,384 high-value customers haven't purchased in an average of 394 days. Re-engaging this segment represents the single highest-ROI retention opportunity.
-
-**6. Retention collapses to 0.5% after month one**
-Industry benchmark for e-commerce month-1 retention is 20–30%. This business sits at 0.5% — a 40x gap — confirming that growth is entirely dependent on new customer acquisition.
-
-**7. Logistics is not the cause of churn**
-97.09% of orders are delivered successfully, ruling out fulfillment failure as the primary driver of the retention problem.
-
-**8. Reviews drop sharply after 21 days delivery time**
-Average review score falls from 4.33 (0–7 day delivery) to 2.15 (31–60 day delivery) — a clear satisfaction cliff at the 3-week mark.
-
-**9. Late deliveries get 40% lower review scores**
-On-time orders average 4.21★ vs. 2.55★ for late orders (avg. 31 days vs. 10 days). The 7,658 late orders represent a direct, measurable reputational and retention risk.
-
----
-
-## Business Recommendations
-
-- Launch a targeted win-back campaign for the 13,384 "At Risk" customers — highest revenue recovery potential per customer reached
-- Investigate the root cause of declining Average Order Value (pricing, product mix, promotions)
-- Set a 21-day delivery SLA as a satisfaction threshold and prioritize logistics improvements for orders trending past it
-- Build an automated re-engagement flow (email/push) triggered after 60–90 days of customer inactivity
-- Increase marketing investment in the Beleza category given its superior revenue-per-order economics
-
----
-
-## Dashboard Preview
-
-The Tableau dashboard includes:
-- KPI overview (Total Revenue, Total Customers, Avg Review Score)
-- Monthly revenue & order trend
-- Customer segment distribution and revenue contribution
-- Delivery time vs. review score analysis
-- Full retention cohort heatmap
-
-🔗 **[View Live Dashboard](https://public.tableau.com/views/E-commerceCustomerAnalyticsDashboard_17818688492380/Dashboard1?:language=en-US&publish=yes&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link)**
-
----
-
-## Repository Structure
-
+## Project Structure
 ```
-ecommerce-analytics/
+landing-page-ab-test/
 │
-├── data/                          # raw + exported CSV files
-├── notebooks/
-│   └── ecommerce_analytics.ipynb  # full Python analysis
-├── sql/
-│   └── analysis_queries.sql       # all SQL queries
-├── dashboard/                     # Tableau workbook
-├── README.md
-└── requirements.txt
+├── ab_test_analysis.ipynb       # Main Jupyter Notebook (simulation + analysis)
+├── ab_test_data.csv             # Simulated experiment dataset
+├── ab_test_queries.sql          # SQL analysis queries
+└── README.md                    # Project documentation
 ```
 
----
+## Key Results
 
-## How to Run This Project
+| Metric | Value |
+|---|---|
+| Control conversion rate | 8.17% |
+| Treatment conversion rate | 9.58% |
+| Absolute lift | +1.40 percentage points |
+| Relative lift | **+17.18%** |
+| Z-statistic | -1.98 |
+| P-value | **0.0481** |
+| 95% Confidence Interval | (0.01pp, 2.80pp) |
 
-```bash
-# Clone the repository
-git clone https://github.com/yourusername/ecommerce-analytics.git
-cd ecommerce-analytics
+**Decision:** Reject H₀. The difference in conversion rates is statistically significant (p = 0.048 < α = 0.05). The new landing page produced a meaningful lift in conversion rate.
 
-# Install dependencies
-pip install -r requirements.txt
+**Important caveat:** The result is borderline significant — the p-value sits close to the 0.05 threshold and the lower bound of the 95% CI is near zero. This suggests the true effect could be modest, and a follow-up test with a larger sample size would strengthen confidence before a full production rollout.
 
-# Launch Jupyter Notebook
-jupyter notebook notebooks/ecommerce_analytics.ipynb
-```
+## Segment Analysis
 
-For the SQL portion, import the dataset into PostgreSQL and run the queries in `sql/analysis_queries.sql`.
+| Device Type | Control | Treatment | Lift |
+|---|---|---|---|
+| Desktop | 9.08% | 9.14% | ≈ Flat |
+| Mobile | 7.63% | 10.06% | **+2.43pp** |
+| Tablet | 7.87% | 8.33% | +0.46pp |
 
----
+| Traffic Source | Control | Treatment | Lift |
+|---|---|---|---|
+| Organic | 7.58% | 9.99% | **+2.41pp** |
+| Paid | 8.79% | 9.24% | +0.45pp |
+| Social | 8.46% | 9.23% | +0.77pp |
 
-## Author
+The conversion lift was concentrated among **mobile users** and **organic traffic**, while desktop users showed virtually no change. This suggests the redesigned page may be optimized for mobile-first, organically-acquired visitors. Paid and social channels showed only marginal improvement.
 
-**Belle**
-📊 Data Analyst | Python, SQL, Tableau
+Segment-level results are exploratory and directional. Individual segments were not independently powered for significance testing — a follow-up device-specific or channel-specific test is recommended before drawing firm conclusions.
+
+## Guardrail Metric: Average Order Value (AOV)
+
+To confirm the conversion lift did not come at the cost of lower-quality conversions, average order value was compared between groups among converted users only.
+
+| Group | Avg. Order Value | Converters |
+|---|---|---|
+| Control | $50.35 | 262 |
+| Treatment | $50.40 | 307 |
+| T-test p-value | 0.81 | |
+
+No statistically significant difference in AOV between groups (p = 0.81). The new landing page attracted more converting visitors without negatively impacting spend per order.
+
+## SQL Analysis
+Analysis was replicated in PostgreSQL under the `ab_testing` schema. Four queries were written covering:
+1. Overall conversion rate by group
+2. Conversion rate by device type and group
+3. Conversion rate by traffic source and group
+4. Average order value guardrail by group (converters only)
+
+## Dashboard
+An interactive Tableau dashboard visualizing all key results is available on Tableau Public:
+
+🔗 [View Dashboard](https://public.tableau.com/views/ABTestingAnalysisDashboard/Dashboard1?:language=en-US&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link)
+
+The dashboard includes KPI summary cards (Control Rate, Treatment Rate, Relative Lift), conversion rate by group with a baseline reference line, segment breakdowns by device type and traffic source, and the AOV guardrail comparison.
+
+## Limitations
+- **Simulated data:** Results are based on artificially generated data designed to reflect realistic experiment conditions. Real-world data would introduce additional noise, confounders, and complexity.
+- **Borderline significance:** p = 0.048 is close to the threshold. Practical deployment decisions should consider a replication test or a larger sample.
+- **No novelty effect control:** In real experiments, users may respond to a new design simply because it is new rather than because it is genuinely better. This is not accounted for in the simulation.
+- **Segment tests not independently powered:** Segment-level findings are exploratory only and should not be treated as confirmatory results.
+
+## How to Run
+1. Clone this repository
+2. Install dependencies: `pip install pandas numpy scipy statsmodels matplotlib seaborn`
+3. Open `ab_test_analysis.ipynb` in Jupyter Notebook
+4. Run all cells (Kernel → Restart & Run All)
+5. For SQL: connect to PostgreSQL, create schema `ab_testing`, import `ab_test_data.csv`, and run `ab_test_queries.sql`
