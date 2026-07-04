@@ -1,6 +1,6 @@
 # E-Commerce Customer Behavior Analytics
 
-Comprehensive customer analytics project analyzing 95,000+ customers and 99,000+ orders from a Brazilian e-commerce marketplace (Olist). This project explores revenue performance, customer retention, product category contribution, delivery efficiency, and customer satisfaction using Python, SQL, and Tableau.
+End-to-end customer analytics project analyzing 95,000+ customers and 99,000+ orders from a Brazilian e-commerce marketplace (Olist). This project explores revenue performance, customer retention, product category contribution, delivery efficiency, and customer satisfaction using Python, SQL, and Tableau.
 
 🔗 **[View Interactive Dashboard](https://public.tableau.com/views/E-commerceCustomerAnalyticsDashboard_17818688492380/Dashboard1)**
 
@@ -90,7 +90,7 @@ The goal was to transform raw transactional data into actionable business insigh
 - Compared on-time vs. late delivery impact on customer satisfaction
 
 **7. SQL Business Analysis**
-- Designed relational schema in PostgreSQL
+- Implemented the relational schema in PostgreSQL
 - Translated all core analytical logic into SQL to validate and replicate Python findings
 
 **8. Dashboard Development**
@@ -141,7 +141,7 @@ On-time deliveries averaged 4.21★ vs. 2.55★ for late deliveries (avg. 31 day
 
 ## Dashboard
 
-The Tableau dashboard includes:
+The interactive dashboard presents:
 - Revenue and order KPIs (Total Revenue, Total Customers, Avg Review Score)
 - Monthly revenue and order trends (2017–2018)
 - Product category performance by orders and revenue
