@@ -3,8 +3,12 @@
 -- Analysis
 -- ==========================================================
 
-
+-- ============================================
 -- 1. Monthly Revenue Performance
+-- Q: How is revenue and order volume trending month over month?
+-- ============================================
+
+
 
 WITH order_revenue AS (
     SELECT
@@ -13,7 +17,6 @@ WITH order_revenue AS (
     FROM order_items
     GROUP BY order_id
 )
-
 SELECT
     DATE_TRUNC('month', o.order_purchase_timestamp) AS order_month,
     COUNT(DISTINCT o.order_id) AS total_orders,
@@ -28,8 +31,11 @@ GROUP BY order_month
 ORDER BY order_month;
 
 
-
+-- ============================================
 -- 2. Top Product Categories by Revenue
+-- Q: Which product categories drive the most revenue?
+-- ============================================
+
 
 SELECT
     COALESCE(p.product_category_name, 'Unknown') AS product_category_name,
@@ -48,7 +54,12 @@ LIMIT 10;
 
 
 
--- 3. Customer RFM Analysis
+-- ============================================
+-- 3. Customer RFM Analysis (Recency, Frequency, Monetary)
+-- Q: What are each customer's recency, frequency, and monetary values?
+-- Note: RFM scoring and segmentation performed in Python (see notebook).
+-- ============================================
+
 
 WITH customer_rfm AS (
     SELECT
@@ -61,41 +72,49 @@ WITH customer_rfm AS (
         ON o.order_id = oi.order_id
     WHERE o.order_status = 'delivered'
     GROUP BY o.customer_id
+),
+snapshot AS (
+    SELECT MAX(order_purchase_timestamp) AS snapshot_date
+    FROM orders
+    WHERE order_status = 'delivered'
 )
-
 SELECT
-    customer_id,
-    (
-        SELECT MAX(order_purchase_timestamp)
-        FROM orders
-        WHERE order_status = 'delivered'
-    ) - last_purchase_date AS recency,
-    frequency,
-    monetary_value
-FROM customer_rfm
-ORDER BY monetary_value DESC;
+    c.customer_id,
+    EXTRACT(DAY FROM (s.snapshot_date - c.last_purchase_date)) AS recency_days,
+    c.frequency,
+    c.monetary_value
+FROM customer_rfm c
+CROSS JOIN snapshot s
+ORDER BY c.monetary_value DESC;
 
 
-
+-- ============================================
 -- 4. Delivery Time vs Customer Reviews
+-- Q: Does slower delivery correlate with lower review scores?
+-- ============================================
 
+
+WITH delivery_data AS (
+    SELECT
+        r.review_score,
+        CASE
+            WHEN EXTRACT(DAY FROM (o.order_delivered_customer_date - o.order_purchase_timestamp)) <= 7 THEN '0-7 Days'
+            WHEN EXTRACT(DAY FROM (o.order_delivered_customer_date - o.order_purchase_timestamp)) <= 14 THEN '8-14 Days'
+            WHEN EXTRACT(DAY FROM (o.order_delivered_customer_date - o.order_purchase_timestamp)) <= 21 THEN '15-21 Days'
+            WHEN EXTRACT(DAY FROM (o.order_delivered_customer_date - o.order_purchase_timestamp)) <= 30 THEN '22-30 Days'
+            ELSE '31+ Days'
+        END AS delivery_time_bucket,
+        EXTRACT(DAY FROM (o.order_delivered_customer_date - o.order_purchase_timestamp)) AS delivery_days
+    FROM orders o
+    JOIN reviews r
+        ON o.order_id = r.order_id
+    WHERE o.order_status = 'delivered'
+)
 SELECT
-    CASE
-        WHEN EXTRACT(DAY FROM (o.order_delivered_customer_date - o.order_purchase_timestamp)) <= 7 THEN '0-7 Days'
-        WHEN EXTRACT(DAY FROM (o.order_delivered_customer_date - o.order_purchase_timestamp)) <= 14 THEN '8-14 Days'
-        WHEN EXTRACT(DAY FROM (o.order_delivered_customer_date - o.order_purchase_timestamp)) <= 21 THEN '15-21 Days'
-        WHEN EXTRACT(DAY FROM (o.order_delivered_customer_date - o.order_purchase_timestamp)) <= 30 THEN '22-30 Days'
-        ELSE '31+ Days'
-    END AS delivery_time_bucket,
-    ROUND(AVG(r.review_score), 2) AS average_review_score,
-    ROUND(
-        AVG(EXTRACT(DAY FROM (o.order_delivered_customer_date - o.order_purchase_timestamp))),
-        2
-    ) AS average_delivery_days
-FROM orders o
-JOIN reviews r
-    ON o.order_id = r.order_id
-WHERE o.order_status = 'delivered'
+    delivery_time_bucket,
+    ROUND(AVG(review_score), 2) AS average_review_score,
+    ROUND(AVG(delivery_days), 2) AS average_delivery_days
+FROM delivery_data
 GROUP BY delivery_time_bucket
 ORDER BY
     CASE delivery_time_bucket
@@ -107,8 +126,12 @@ ORDER BY
     END;
 
 
-
+-- ============================================
 -- 5. Order Funnel Distribution
+-- Q: What percentage of orders fall into each status
+--    (delivered, canceled, shipped, etc.)?
+-- ============================================
+
 
 SELECT
     order_status,
