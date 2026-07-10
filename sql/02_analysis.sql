@@ -31,6 +31,7 @@ GROUP BY order_month
 ORDER BY order_month;
 
 
+
 -- ============================================
 -- 2. Top Product Categories by Revenue
 -- Q: Which product categories drive the most revenue?
@@ -88,10 +89,12 @@ CROSS JOIN snapshot s
 ORDER BY c.monetary_value DESC;
 
 
+
 -- ============================================
 -- 4. Delivery Time vs Customer Reviews
 -- Q: Does slower delivery correlate with lower review scores?
 -- ============================================
+
 
 
 WITH delivery_data AS (
@@ -125,7 +128,6 @@ ORDER BY
         ELSE 5
     END;
 
-
 -- ============================================
 -- 5. Order Funnel Distribution
 -- Q: What percentage of orders fall into each status
@@ -142,3 +144,4 @@ SELECT
 FROM orders
 GROUP BY order_status
 ORDER BY order_percentage DESC;
+
