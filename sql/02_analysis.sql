@@ -81,7 +81,6 @@ ORDER BY c.monetary_value DESC;
 -- 4. Delivery Time vs Customer Reviews
 -- Q: Does slower delivery correlate with lower review scores?
 -- ============================================
-
 WITH delivery_data AS (
     SELECT
         r.review_score,
@@ -127,4 +126,3 @@ SELECT
 FROM orders
 GROUP BY order_status
 ORDER BY order_percentage DESC;
-
