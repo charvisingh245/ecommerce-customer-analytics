@@ -91,7 +91,7 @@ The goal was to transform raw transactional data into actionable business insigh
 
 **7. SQL Business Analysis**
 - Implemented the relational schema in PostgreSQL
-- Translated all core analytical logic into SQL to validate and replicate Python findings
+- Replicated core analytical logic in SQL (revenue, categories, delivery, funnel); RFM scoring and segmentation logic lives in Python, with SQL providing the underlying recency/frequency/monetary extraction
 
 **8. Dashboard Development**
 - Built an interactive Tableau dashboard for stakeholder-level reporting covering all key analyses
@@ -101,7 +101,7 @@ The goal was to transform raw transactional data into actionable business insigh
 ## Key Insights
 
 **1. Revenue quality is declining**
-Order volume grew steadily, but Average Order Value declined over time — indicating growth was increasingly driven by lower-value purchases rather than genuine demand expansion.
+Order volume grew steadily, but Average Order Value declined over time indicating growth was increasingly driven by lower-value purchases rather than genuine demand expansion.
 
 **2. Beauty is the highest-value category**
 Despite Bed/Bath (Cama) having more total orders, the Beauty (Beleza) category generated higher total revenue due to a significantly stronger average price point.
@@ -110,7 +110,7 @@ Despite Bed/Bath (Cama) having more total orders, the Beauty (Beleza) category g
 The average customer transacts 1.03 times, reflecting significantly low repeat purchase behavior.
 
 **4. "Need Attention" is the largest customer segment**
-Over 32,000 customers — 33% of the base — fall into this low-engagement, low-spend segment, representing significant untapped retention potential.
+Over 32,000 customers ( 33% of the base ) fall into this low-engagement, low-spend segment, representing significant untapped retention potential.
 
 **5. The "At Risk" segment drives the most total revenue**
 13,384 high-value customers haven't purchased in an average of 394 days. Re-engaging this segment represents one of the highest-value retention opportunities in the business.
@@ -125,13 +125,13 @@ A 97.09% successful delivery rate suggests fulfillment failure is not the sole d
 Review scores declined from 4.33 (0–7 day delivery) to 2.15 (31–60 days), with a clear satisfaction drop after the 21-day mark.
 
 **9. Late deliveries receive 40% lower review scores**
-On-time deliveries averaged 4.21★ vs. 2.55★ for late deliveries (avg. 31 days vs. 10 days), affecting 7,658 customers — a measurable reputational and retention risk.
+On-time deliveries averaged 4.21★ vs. 2.55★ for late deliveries (avg. 31 days vs. 10 days), affecting 7,658 customers , a measurable reputational and retention risk.
 
 ---
 
 ## Business Recommendations
 
-- Launch targeted win-back campaigns for the 13,384 At Risk customers — highest revenue recovery potential per customer reached
+- Launch targeted win-back campaigns for the 13,384 At Risk customers - highest revenue recovery potential per customer reached
 - Investigate the root drivers of declining Average Order Value (product mix, pricing, promotions)
 - Set a 21-day delivery SLA as the customer satisfaction threshold and prioritize logistics improvements for orders trending past it
 - Implement automated re-engagement workflows triggered after 60–90 days of customer inactivity
